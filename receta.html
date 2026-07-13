@@ -63,6 +63,7 @@
                 <div><dt>${t("dt_diff")}</dt><dd>${esc(etiquetaDificultad(receta, lang))}</dd></div>
               </dl>
               <div class="receta-acciones">
+                <a class="boton boton-secundario" href="agregar.html?editar=${encodeURIComponent(receta.id)}">${t("edit_btn")}</a>
                 <a class="boton boton-secundario" href="${linkVideo(receta, lang)}" target="_blank" rel="noopener">${t(receta.video ? "video_btn_custom" : "video_btn")}</a>
                 ${receta.fuente ? `<p class="receta-fuente">${t("source_label")} <a href="${esc(receta.fuente.url)}" target="_blank" rel="noopener">${esc(receta.fuente.nombre)}</a></p>` : ""}
               </div>

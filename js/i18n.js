@@ -104,6 +104,11 @@ export const TEXTOS = {
     video_btn_custom: "▶ לצפות בסרטון ההכנה",
     source_label: "מבוסס על המתכון של",
     tip_label: "טיפ מהמטבח",
+    edit_btn: "✎ עריכת המתכון",
+    edit_title: "עורכים את המתכון",
+    edit_example_note: "זהו מתכון לדוגמה — השינויים יישמרו כעותק חדש שלכם, והדוגמה תישאר כמו שהיא.",
+    submit_edit: "לשמור את השינויים",
+    success_edit: (nombre) => `„${nombre}" עודכן בהצלחה.`,
     video_note: "",
 
     cats: { pasta: "פסטה", stew: "תבשילים", meat: "בשרים", salad: "סלטים", sweet: "מתוקים", baked: "מאפים", other: "עוד" },
@@ -205,6 +210,11 @@ export const TEXTOS = {
     video_btn_custom: "▶ Watch the how-to video",
     source_label: "Based on the recipe by",
     tip_label: "Kitchen tip",
+    edit_btn: "✎ Edit recipe",
+    edit_title: "Edit the recipe",
+    edit_example_note: "This is a sample recipe — your changes will be saved as your own new copy, and the sample stays as it is.",
+    submit_edit: "Save changes",
+    success_edit: (nombre) => `"${nombre}" was updated.`,
     video_note: "",
 
     cats: { pasta: "Pasta", stew: "Stews", meat: "Meat", salad: "Salads", sweet: "Sweets", baked: "Baking", other: "More" },

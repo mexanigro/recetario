@@ -27,8 +27,9 @@
 
     <div id="zona-form">
       <div class="form-encabezado">
-        <h1 data-i18n="add_title">כותבים מתכון חדש</h1>
+        <h1 id="titulo-form" data-i18n="add_title">כותבים מתכון חדש</h1>
         <p data-i18n="add_sub">פרטו כל שלב, גם מה שנראה מובן מאליו — כמויות, זמנים, גודל חיתוך. מתכון מפורט מצליח גם בפעם הראשונה.</p>
+        <p class="aviso-ejemplo" id="aviso-ejemplo" hidden></p>
       </div>
 
       <div class="form-layout">
@@ -141,8 +142,12 @@
   </main>
 
   <script type="module">
-    import { guardarReceta, cartaReceta, esc } from "./js/app.js";
+    import { guardarReceta, actualizarReceta, traerReceta, cartaReceta, esc, loc, etiquetaCategoria, etiquetaDificultad } from "./js/app.js";
     import { TEXTOS, getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
+
+    // Modo edición: agregar.html?editar=<id>
+    const editarId = new URLSearchParams(location.search).get("editar");
+    let recetaOriginal = null;
 
     const form = document.getElementById("formulario");
     const vistaPrevia = document.getElementById("vista-previa");
@@ -158,6 +163,7 @@
       fila.innerHTML = `
         <input type="text" maxlength="140" placeholder="${esc(t("ph_ing"))}" autocomplete="off">
         <button type="button" class="quitar" aria-label="${esc(t("quitar_aria"))}">×</button>`;
+      fila.querySelector("input").value = valor;
       return fila;
     }
 
@@ -168,6 +174,8 @@
         <span class="num" aria-hidden="true"></span>
         <textarea rows="2" maxlength="500" placeholder="${esc(t("ph_step"))}"></textarea>
         <button type="button" class="quitar" aria-label="${esc(t("quitar_aria"))}">×</button>`;
+      const ta = fila.querySelector("textarea");
+      ta.value = valor;
       return fila;
     }
 
@@ -177,17 +185,19 @@
       });
     }
 
-    function agregarIngrediente(enfocar = false) {
-      const fila = filaIngrediente();
+    function agregarIngrediente(enfocar = false, valor = "") {
+      const fila = filaIngrediente(valor);
       filasIng.appendChild(fila);
       if (enfocar) fila.querySelector("input").focus();
     }
 
-    function agregarPaso(enfocar = false) {
-      const fila = filaPaso();
+    function agregarPaso(enfocar = false, valor = "") {
+      const fila = filaPaso(valor);
       filasPasos.appendChild(fila);
       renumerar();
-      if (enfocar) fila.querySelector("textarea").focus();
+      const ta = fila.querySelector("textarea");
+      if (valor) { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; }
+      if (enfocar) ta.focus();
     }
 
     document.getElementById("btn-mas-ing").addEventListener("click", () => agregarIngrediente(true));
@@ -287,6 +297,9 @@
       return ok;
     }
 
+    // ¿Estamos editando una receta propia (documento de Firestore)?
+    const editandoPropia = () => recetaOriginal && !recetaOriginal.ejemplo;
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const r = leerFormulario();
@@ -295,29 +308,39 @@
       btnGuardar.disabled = true;
       btnGuardar.textContent = t("saving");
       try {
-        await guardarReceta(r);
+        let mensaje;
+        if (editandoPropia()) {
+          await actualizarReceta(editarId, r);
+          mensaje = t("success_edit", r.nombre);
+        } else {
+          // receta nueva, o copia editada de un ejemplo
+          await guardarReceta(r);
+          mensaje = t("success_sub", r.nombre);
+        }
         document.getElementById("zona-form").hidden = true;
-        document.getElementById("exito-detalle").textContent = t("success_sub", r.nombre);
+        document.getElementById("exito-detalle").textContent = mensaje;
         document.getElementById("zona-exito").hidden = false;
         window.scrollTo({ top: 0 });
       } catch (err) {
         console.error("Error al guardar:", err);
         btnGuardar.disabled = false;
-        btnGuardar.textContent = t("submit");
+        btnGuardar.textContent = t(editandoPropia() ? "submit_edit" : "submit");
         alert(t("save_error"));
       }
     });
 
     document.getElementById("btn-otra").addEventListener("click", () => {
+      // salir del modo edición: lo próximo que se guarde es una receta nueva
+      recetaOriginal = null;
+      history.replaceState(null, "", "agregar.html");
       form.reset();
       filasIng.innerHTML = "";
       filasPasos.innerHTML = "";
       montarFilasIniciales();
-      actualizarVistaPrevia();
       document.getElementById("zona-exito").hidden = true;
       document.getElementById("zona-form").hidden = false;
       btnGuardar.disabled = false;
-      btnGuardar.textContent = t("submit");
+      pintarTodo();
       form.nombre.focus();
     });
 
@@ -328,10 +351,35 @@
       for (let i = 0; i < 3; i++) agregarPaso();
     }
 
+    // precarga del formulario con una receta existente
+    function precargar(r) {
+      const v = r.ejemplo ? loc(r) : r;
+      form.nombre.value = v.nombre || "";
+      form.categoria.value = etiquetaCategoria(r);
+      form.tiempo.value = v.tiempo || "";
+      form.porciones.value = v.porciones || "";
+      form.dificultad.value = etiquetaDificultad(r) === "—" ? "" : etiquetaDificultad(r);
+      form.imagen.value = v.imagen || "";
+      form.descripcion.value = v.descripcion || "";
+      form.tip.value = r.tip || "";
+      form.video.value = r.video || "";
+      form.fuente.value = r.fuente?.url || "";
+      if (r.tip || r.video || r.fuente) document.querySelector(".mas-detalles").open = true;
+      filasIng.innerHTML = "";
+      filasPasos.innerHTML = "";
+      (v.ingredientes?.length ? v.ingredientes : [""]).forEach((ing) => agregarIngrediente(false, ing));
+      (v.pasos?.length ? v.pasos : [""]).forEach((p) => agregarPaso(false, p));
+    }
+
     function pintarTodo() {
-      document.title = t("title_add");
+      const editando = !!recetaOriginal;
+      document.title = t(editando ? "edit_title" : "title_add");
+      document.getElementById("titulo-form").textContent = t(editando ? "edit_title" : "add_title");
+      btnGuardar.textContent = t(editandoPropia() ? "submit_edit" : "submit");
+      const aviso = document.getElementById("aviso-ejemplo");
+      aviso.hidden = !(recetaOriginal?.ejemplo);
+      if (recetaOriginal?.ejemplo) aviso.textContent = t("edit_example_note");
       pintarSugerencias();
-      // refrescar placeholders de filas existentes al cambiar idioma
       filasIng.querySelectorAll("input").forEach((el) => { el.placeholder = t("ph_ing"); });
       filasPasos.querySelectorAll("textarea").forEach((el) => { el.placeholder = t("ph_step"); });
       actualizarVistaPrevia();
@@ -341,6 +389,14 @@
     conectarToggle(pintarTodo);
     montarFilasIniciales();
     pintarTodo();
+
+    if (editarId) {
+      recetaOriginal = await traerReceta(editarId);
+      if (recetaOriginal) {
+        precargar(recetaOriginal);
+        pintarTodo();
+      }
+    }
   </script>
 </body>
 </html>

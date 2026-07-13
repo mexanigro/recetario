@@ -8,7 +8,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, doc, getDoc,
+  getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc,
   query, orderBy, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { TEXTOS, getLang } from "./i18n.js";
@@ -625,6 +625,11 @@ export async function traerReceta(id) {
 export async function guardarReceta(receta) {
   const ref = await addDoc(collection(db, COL), { ...receta, creado: serverTimestamp() });
   return ref.id;
+}
+
+export async function actualizarReceta(id, receta) {
+  await updateDoc(doc(db, COL, id), { ...receta, editado: serverTimestamp() });
+  return id;
 }
 
 // ------------------------------------------------------------
