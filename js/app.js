@@ -8,7 +8,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc,
+  getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc,
   query, orderBy, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { TEXTOS, getLang } from "./i18n.js";
@@ -26,9 +26,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ------------------------------------------------------------
-// Recetas de ejemplo: hebreo primario + inglés idiomático.
-// Cada paso es un micro-paso con cantidades y tiempos exactos,
-// pensado para alguien que está aprendiendo a cocinar de cero.
+// Recetas de ejemplo (hebreo primario + inglés idiomático).
+// SOLO se usan como semilla inicial: `sembrarEjemplos()` las
+// escribe en Firestore como documentos reales (con IDs fijos
+// ej-*). A partir de ahí son recetas comunes: editables y
+// borrables como cualquier otra. No se mergean en la lista.
 // ------------------------------------------------------------
 
 export const RECETAS_EJEMPLO = [
@@ -599,20 +601,17 @@ export const RECETAS_EJEMPLO = [
 const COL = "recetas";
 
 export async function traerRecetas() {
-  let propias = [];
   try {
     const q = query(collection(db, COL), orderBy("creado", "desc"));
     const snap = await getDocs(q);
-    propias = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (err) {
     console.error("No se pudieron traer las recetas de Firestore:", err);
+    return [];
   }
-  return [...propias, ...RECETAS_EJEMPLO];
 }
 
 export async function traerReceta(id) {
-  const ejemplo = RECETAS_EJEMPLO.find((r) => r.id === id);
-  if (ejemplo) return ejemplo;
   try {
     const snap = await getDoc(doc(db, COL, id));
     if (snap.exists()) return { id: snap.id, ...snap.data() };
@@ -620,6 +619,27 @@ export async function traerReceta(id) {
     console.error("No se pudo traer la receta:", err);
   }
   return null;
+}
+
+// Siembra las recetas de ejemplo en Firestore con IDs fijos.
+// Idempotente: re-ejecutar sobrescribe (no duplica). Timestamps
+// viejos y decrecientes para que queden después de las recetas
+// del usuario, conservando el orden del array.
+export async function sembrarEjemplos() {
+  const base = Date.parse("2020-06-01T00:00:00Z");
+  let n = 0;
+  for (let i = 0; i < RECETAS_EJEMPLO.length; i++) {
+    const { id, ...datos } = RECETAS_EJEMPLO[i];
+    // nombre de nivel superior: lo exigen las reglas de Firestore
+    // (el contenido bilingüe vive en he/en).
+    await setDoc(doc(db, COL, id), {
+      ...datos,
+      nombre: datos.he?.nombre || datos.en?.nombre || "מתכון",
+      creado: new Date(base - i * 60000),
+    });
+    n++;
+  }
+  return n;
 }
 
 export async function guardarReceta(receta) {

@@ -98,7 +98,6 @@
             </div>
           </section>
 
-          ${!receta.ejemplo ? `
           <section class="zona-peligro">
             <button class="boton-peligro" id="btn-borrar" type="button">${t("delete_btn")}</button>
             <div class="confirmar-borrado" id="confirmar-borrado" hidden>
@@ -110,7 +109,7 @@
                 <button class="boton boton-secundario" id="btn-borrar-cancelar" type="button">${t("delete_cancel")}</button>
               </div>
             </div>
-          </section>` : ""}
+          </section>
         </article>`;
 
       conectarBorrado();

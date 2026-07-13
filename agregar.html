@@ -29,7 +29,6 @@
       <div class="form-encabezado">
         <h1 id="titulo-form" data-i18n="add_title">כותבים מתכון חדש</h1>
         <p data-i18n="add_sub">פרטו כל שלב, גם מה שנראה מובן מאליו — כמויות, זמנים, גודל חיתוך. מתכון מפורט מצליח גם בפעם הראשונה.</p>
-        <p class="aviso-ejemplo" id="aviso-ejemplo" hidden></p>
       </div>
 
       <div class="form-layout">
@@ -297,8 +296,8 @@
       return ok;
     }
 
-    // ¿Estamos editando una receta propia (documento de Firestore)?
-    const editandoPropia = () => recetaOriginal && !recetaOriginal.ejemplo;
+    // Toda receta cargada es un documento real de Firestore -> se edita en el lugar.
+    const editando = () => !!recetaOriginal;
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -309,11 +308,10 @@
       btnGuardar.textContent = t("saving");
       try {
         let mensaje;
-        if (editandoPropia()) {
+        if (editando()) {
           await actualizarReceta(editarId, r);
           mensaje = t("success_edit", r.nombre);
         } else {
-          // receta nueva, o copia editada de un ejemplo
           await guardarReceta(r);
           mensaje = t("success_sub", r.nombre);
         }
@@ -324,7 +322,7 @@
       } catch (err) {
         console.error("Error al guardar:", err);
         btnGuardar.disabled = false;
-        btnGuardar.textContent = t(editandoPropia() ? "submit_edit" : "submit");
+        btnGuardar.textContent = t(editando() ? "submit_edit" : "submit");
         alert(t("save_error"));
       }
     });
@@ -351,9 +349,11 @@
       for (let i = 0; i < 3; i++) agregarPaso();
     }
 
-    // precarga del formulario con una receta existente
+    // precarga del formulario con una receta existente. loc() mezcla el
+    // contenido del idioma actual sobre los campos base, así funciona
+    // tanto con recetas bilingües (he/en) como con las de un solo idioma.
     function precargar(r) {
-      const v = r.ejemplo ? loc(r) : r;
+      const v = loc(r);
       form.nombre.value = v.nombre || "";
       form.categoria.value = etiquetaCategoria(r);
       form.tiempo.value = v.tiempo || "";
@@ -361,10 +361,10 @@
       form.dificultad.value = etiquetaDificultad(r) === "—" ? "" : etiquetaDificultad(r);
       form.imagen.value = v.imagen || "";
       form.descripcion.value = v.descripcion || "";
-      form.tip.value = r.tip || "";
-      form.video.value = r.video || "";
-      form.fuente.value = r.fuente?.url || "";
-      if (r.tip || r.video || r.fuente) document.querySelector(".mas-detalles").open = true;
+      form.tip.value = v.tip || "";
+      form.video.value = v.video || "";
+      form.fuente.value = v.fuente?.url || "";
+      if (v.tip || v.video || v.fuente) document.querySelector(".mas-detalles").open = true;
       filasIng.innerHTML = "";
       filasPasos.innerHTML = "";
       (v.ingredientes?.length ? v.ingredientes : [""]).forEach((ing) => agregarIngrediente(false, ing));
@@ -372,13 +372,9 @@
     }
 
     function pintarTodo() {
-      const editando = !!recetaOriginal;
-      document.title = t(editando ? "edit_title" : "title_add");
-      document.getElementById("titulo-form").textContent = t(editando ? "edit_title" : "add_title");
-      btnGuardar.textContent = t(editandoPropia() ? "submit_edit" : "submit");
-      const aviso = document.getElementById("aviso-ejemplo");
-      aviso.hidden = !(recetaOriginal?.ejemplo);
-      if (recetaOriginal?.ejemplo) aviso.textContent = t("edit_example_note");
+      document.title = t(editando() ? "edit_title" : "title_add");
+      document.getElementById("titulo-form").textContent = t(editando() ? "edit_title" : "add_title");
+      btnGuardar.textContent = t(editando() ? "submit_edit" : "submit");
       pintarSugerencias();
       filasIng.querySelectorAll("input").forEach((el) => { el.placeholder = t("ph_ing"); });
       filasPasos.querySelectorAll("textarea").forEach((el) => { el.placeholder = t("ph_step"); });
