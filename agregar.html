@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>הוספת מתכון — פינת המתכונים</title>
-  <meta name="description" content="מוסיפים מתכון חדש לספר: שם, תמונה, מצרכים והוראות הכנה.">
+  <meta name="description" content="מוסיפים מתכון חדש: שם, תמונה, מצרכים והוראות הכנה צעד־צעד.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +44,9 @@
           <div class="fila-campos">
             <div class="campo">
               <label for="categoria" data-i18n="lbl_cat">קטגוריה</label>
-              <select id="categoria" name="categoria"></select>
+              <input type="text" id="categoria" name="categoria" list="cats-sugeridas"
+                     maxlength="40" data-i18n-ph="ph_cat" autocomplete="off">
+              <datalist id="cats-sugeridas"></datalist>
             </div>
             <div class="campo">
               <label for="tiempo" data-i18n="lbl_time">זמן (בדקות)</label>
@@ -58,7 +60,9 @@
 
           <div class="campo">
             <label for="dificultad" data-i18n="lbl_diff">דרגת קושי</label>
-            <select id="dificultad" name="dificultad"></select>
+            <input type="text" id="dificultad" name="dificultad" list="diffs-sugeridas"
+                   maxlength="40" data-i18n-ph="ph_diff" autocomplete="off">
+            <datalist id="diffs-sugeridas"></datalist>
           </div>
 
           <div class="campo">
@@ -70,20 +74,44 @@
           <div class="campo">
             <label for="descripcion"><span data-i18n="lbl_desc">תיאור קצר</span> <span class="opcional" data-i18n="optional_short">(לא חובה)</span></label>
             <input type="text" id="descripcion" name="descripcion" maxlength="200"
-                   data-i18n-ph="ph_desc" placeholder="הקלאסיקה של ארוחת שישי" autocomplete="off">
+                   data-i18n-ph="ph_desc" placeholder="המנה הראשונה שלמדתי לבשל" autocomplete="off">
           </div>
 
           <div class="campo" id="campo-ingredientes">
-            <label for="ingredientes"><span data-i18n="lbl_ing">מצרכים</span> <span class="opcional" data-i18n="per_line">(אחד בכל שורה)</span></label>
-            <textarea id="ingredientes" name="ingredientes" required data-i18n-ph="ph_ing"></textarea>
+            <label><span data-i18n="lbl_ing">מצרכים</span> <span class="opcional" data-i18n="ing_hint">(שורה לכל מצרך, עם הכמות)</span></label>
+            <div class="filas" id="filas-ingredientes"></div>
+            <button type="button" class="boton-anadir" id="btn-mas-ing" data-i18n="btn_add_ing">+ עוד מצרך</button>
             <p class="error" data-i18n="err_ing">רשמו לפחות מצרך אחד.</p>
           </div>
 
           <div class="campo" id="campo-pasos">
-            <label for="pasos"><span data-i18n="lbl_steps">הוראות הכנה</span> <span class="opcional" data-i18n="per_line">(אחד בכל שורה)</span></label>
-            <textarea id="pasos" name="pasos" required data-i18n-ph="ph_steps"></textarea>
+            <label data-i18n="lbl_steps">הוראות הכנה — צעד־צעד</label>
+            <p class="ayuda" data-i18n="steps_hint">כל שורה היא צעד קטן אחד. אל תחסכו: גם „שוטפים את הירקות" זה שלב.</p>
+            <div class="filas" id="filas-pasos"></div>
+            <button type="button" class="boton-anadir" id="btn-mas-paso" data-i18n="btn_add_step">+ עוד שלב</button>
             <p class="error" data-i18n="err_steps">ספרו לפחות שלב אחד.</p>
           </div>
+
+          <details class="mas-detalles">
+            <summary data-i18n="mas_detalles">עוד פרטים למתכון (לא חובה)</summary>
+            <div class="campos-extra">
+              <div class="campo">
+                <label for="tip" data-i18n="lbl_tip">טיפ אישי</label>
+                <input type="text" id="tip" name="tip" maxlength="250" data-i18n-ph="ph_tip"
+                       placeholder="אצלי זה יוצא הכי טוב כש…" autocomplete="off">
+              </div>
+              <div class="campo">
+                <label for="video" data-i18n="lbl_video">קישור לסרטון הכנה</label>
+                <input type="url" id="video" name="video" placeholder="https://…" autocomplete="off" dir="ltr">
+                <p class="ayuda" data-i18n="help_video">אם יש סרטון שאתם אוהבים (יוטיוב, טיקטוק…) — הדביקו קישור והוא יופיע במתכון.</p>
+              </div>
+              <div class="campo">
+                <label for="fuente" data-i18n="lbl_fuente">קישור למקור</label>
+                <input type="url" id="fuente" name="fuente" placeholder="https://…" autocomplete="off" dir="ltr">
+                <p class="ayuda" data-i18n="help_fuente">אם המתכון מבוסס על אתר או בלוג — תנו קרדיט עם קישור.</p>
+              </div>
+            </div>
+          </details>
 
           <div>
             <button class="boton" type="submit" id="btn-guardar" data-i18n="submit">לשמור בפינת המתכונים</button>
@@ -113,42 +141,122 @@
   </main>
 
   <script type="module">
-    import { guardarReceta, cartaReceta } from "./js/app.js";
+    import { guardarReceta, cartaReceta, esc } from "./js/app.js";
     import { TEXTOS, getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const form = document.getElementById("formulario");
     const vistaPrevia = document.getElementById("vista-previa");
     const btnGuardar = document.getElementById("btn-guardar");
-    const selCategoria = document.getElementById("categoria");
-    const selDificultad = document.getElementById("dificultad");
+    const filasIng = document.getElementById("filas-ingredientes");
+    const filasPasos = document.getElementById("filas-pasos");
 
-    const lineas = (texto) => texto.split("\n").map((l) => l.trim()).filter(Boolean);
+    // ---------- filas dinámicas ----------
 
-    // Los selects usan claves estables; las etiquetas cambian con el idioma.
-    function pintarSelects() {
-      const lang = getLang();
-      const catActual = selCategoria.value;
-      const difActual = selDificultad.value;
-      selCategoria.innerHTML = Object.entries(TEXTOS[lang].cats)
-        .map(([clave, nombre]) => `<option value="${clave}">${nombre}</option>`).join("");
-      selDificultad.innerHTML = Object.entries(TEXTOS[lang].diffs)
-        .map(([clave, nombre]) => `<option value="${clave}">${nombre}</option>`).join("");
-      if (catActual) selCategoria.value = catActual;
-      if (difActual) selDificultad.value = difActual;
+    function filaIngrediente(valor = "") {
+      const fila = document.createElement("div");
+      fila.className = "fila";
+      fila.innerHTML = `
+        <input type="text" maxlength="140" placeholder="${esc(t("ph_ing"))}" autocomplete="off">
+        <button type="button" class="quitar" aria-label="${esc(t("quitar_aria"))}">×</button>`;
+      return fila;
     }
 
+    function filaPaso(valor = "") {
+      const fila = document.createElement("div");
+      fila.className = "fila";
+      fila.innerHTML = `
+        <span class="num" aria-hidden="true"></span>
+        <textarea rows="2" maxlength="500" placeholder="${esc(t("ph_step"))}"></textarea>
+        <button type="button" class="quitar" aria-label="${esc(t("quitar_aria"))}">×</button>`;
+      return fila;
+    }
+
+    function renumerar() {
+      [...filasPasos.querySelectorAll(".num")].forEach((n, i) => {
+        n.textContent = String(i + 1).padStart(2, "0");
+      });
+    }
+
+    function agregarIngrediente(enfocar = false) {
+      const fila = filaIngrediente();
+      filasIng.appendChild(fila);
+      if (enfocar) fila.querySelector("input").focus();
+    }
+
+    function agregarPaso(enfocar = false) {
+      const fila = filaPaso();
+      filasPasos.appendChild(fila);
+      renumerar();
+      if (enfocar) fila.querySelector("textarea").focus();
+    }
+
+    document.getElementById("btn-mas-ing").addEventListener("click", () => agregarIngrediente(true));
+    document.getElementById("btn-mas-paso").addEventListener("click", () => agregarPaso(true));
+
+    // Enter en un ingrediente = fila nueva (fluidez de baby-steps)
+    filasIng.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.tagName === "INPUT") {
+        e.preventDefault();
+        agregarIngrediente(true);
+      }
+    });
+
+    // quitar filas (siempre queda al menos una)
+    for (const cont of [filasIng, filasPasos]) {
+      cont.addEventListener("click", (e) => {
+        const btn = e.target.closest(".quitar");
+        if (!btn) return;
+        if (cont.children.length > 1) btn.closest(".fila").remove();
+        else btn.closest(".fila").querySelector("input, textarea").value = "";
+        renumerar();
+        actualizarVistaPrevia();
+      });
+    }
+
+    // textareas de pasos crecen con el contenido
+    filasPasos.addEventListener("input", (e) => {
+      if (e.target.tagName === "TEXTAREA") {
+        e.target.style.height = "auto";
+        e.target.style.height = e.target.scrollHeight + "px";
+      }
+    });
+
+    // ---------- sugerencias (datalist): opciones sin limitar ----------
+
+    function pintarSugerencias() {
+      const lang = getLang();
+      document.getElementById("cats-sugeridas").innerHTML =
+        Object.values(TEXTOS[lang].cats).map((n) => `<option value="${esc(n)}">`).join("");
+      document.getElementById("diffs-sugeridas").innerHTML =
+        Object.values(TEXTOS[lang].diffs).map((n) => `<option value="${esc(n)}">`).join("");
+    }
+
+    // ---------- lectura + vista previa ----------
+
+    const valoresFilas = (cont) =>
+      [...cont.querySelectorAll("input, textarea")].map((el) => el.value.trim()).filter(Boolean);
+
     function leerFormulario() {
+      const fuenteUrl = form.fuente.value.trim();
+      let fuente = null;
+      if (fuenteUrl) {
+        try { fuente = { nombre: new URL(fuenteUrl).hostname.replace(/^www\./, ""), url: fuenteUrl }; }
+        catch { fuente = null; }
+      }
       return {
         nombre: form.nombre.value.trim(),
-        categoria: selCategoria.value,
+        categoria: form.categoria.value.trim() || null,
         tiempo: Number(form.tiempo.value) || null,
         porciones: Number(form.porciones.value) || null,
-        dificultad: selDificultad.value,
+        dificultad: form.dificultad.value.trim() || null,
         imagen: form.imagen.value.trim() || null,
         descripcion: form.descripcion.value.trim() || null,
-        ingredientes: lineas(form.ingredientes.value),
-        pasos: lineas(form.pasos.value),
-        idioma: getLang(), // en qué idioma se escribió
+        ingredientes: valoresFilas(filasIng),
+        pasos: valoresFilas(filasPasos),
+        tip: form.tip.value.trim() || null,
+        video: form.video.value.trim() || null,
+        fuente,
+        idioma: getLang(),
       };
     }
 
@@ -163,6 +271,8 @@
     }
 
     form.addEventListener("input", actualizarVistaPrevia);
+
+    // ---------- validación + guardado ----------
 
     function validar(r) {
       let ok = true;
@@ -200,6 +310,9 @@
 
     document.getElementById("btn-otra").addEventListener("click", () => {
       form.reset();
+      filasIng.innerHTML = "";
+      filasPasos.innerHTML = "";
+      montarFilasIniciales();
       actualizarVistaPrevia();
       document.getElementById("zona-exito").hidden = true;
       document.getElementById("zona-form").hidden = false;
@@ -208,14 +321,25 @@
       form.nombre.focus();
     });
 
+    // ---------- arranque ----------
+
+    function montarFilasIniciales() {
+      for (let i = 0; i < 3; i++) agregarIngrediente();
+      for (let i = 0; i < 3; i++) agregarPaso();
+    }
+
     function pintarTodo() {
       document.title = t("title_add");
-      pintarSelects();
+      pintarSugerencias();
+      // refrescar placeholders de filas existentes al cambiar idioma
+      filasIng.querySelectorAll("input").forEach((el) => { el.placeholder = t("ph_ing"); });
+      filasPasos.querySelectorAll("textarea").forEach((el) => { el.placeholder = t("ph_step"); });
       actualizarVistaPrevia();
     }
 
     aplicarIdioma();
     conectarToggle(pintarTodo);
+    montarFilasIniciales();
     pintarTodo();
   </script>
 </body>

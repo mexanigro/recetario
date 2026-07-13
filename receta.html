@@ -63,7 +63,7 @@
                 <div><dt>${t("dt_diff")}</dt><dd>${esc(etiquetaDificultad(receta, lang))}</dd></div>
               </dl>
               <div class="receta-acciones">
-                <a class="boton boton-secundario" href="${linkVideo(receta, lang)}" target="_blank" rel="noopener">${t("video_btn")}</a>
+                <a class="boton boton-secundario" href="${linkVideo(receta, lang)}" target="_blank" rel="noopener">${t(receta.video ? "video_btn_custom" : "video_btn")}</a>
                 ${receta.fuente ? `<p class="receta-fuente">${t("source_label")} <a href="${esc(receta.fuente.url)}" target="_blank" rel="noopener">${esc(receta.fuente.nombre)}</a></p>` : ""}
               </div>
             </div>
@@ -89,6 +89,11 @@
               <ol class="pasos">
                 ${(v.pasos || []).map((p) => `<li><p>${esc(p)}</p></li>`).join("")}
               </ol>
+              ${receta.tip ? `
+              <aside class="receta-tip">
+                <p class="tip-label">${t("tip_label")}</p>
+                <p>${esc(receta.tip)}</p>
+              </aside>` : ""}
             </div>
           </section>
         </article>`;

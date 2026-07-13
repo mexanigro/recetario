@@ -630,9 +630,11 @@ export function etiquetaDificultad(r, lang = getLang()) {
   return diffs[r.dificultad] || r.dificultad || "—";
 }
 
-// Link a YouTube: siempre buscamos el video en hebreo (si no hay
-// resultados en hebreo, YouTube muestra lo que exista).
+// Video: si la receta trae un link propio, se usa ese. Si no,
+// búsqueda de YouTube en hebreo (si no hay videos en hebreo,
+// YouTube muestra lo que exista).
 export function linkVideo(r, lang = getLang()) {
+  if (r.video) return r.video;
   const nombreHe = r.videoQuery || (r.he ? `מתכון ${r.he.nombre}` : null);
   const consulta = nombreHe || `מתכון ${loc(r, lang).nombre}`;
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(consulta)}`;

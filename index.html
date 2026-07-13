@@ -26,21 +26,19 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- Hero: tipográfico, sin foto — el ticker muestra pasos reales -->
     <section class="contenedor hero">
-      <div>
-        <h1 data-i18n-html="hero_title_html">לומדים לבשל, <em>מהבסיס.</em></h1>
-        <p data-i18n="hero_sub">הספוט שלי למתכונים: כל מתכון כתוב מהצעד הראשון — כמויות מדויקות, זמנים וכל הפרטים הקטנים. גם אם אף פעם לא בישלתם, מכאן אפשר להתחיל.</p>
-        <div class="hero-acciones">
-          <a class="boton" href="agregar.html" data-i18n="cta_first">להוסיף מתכון ראשון</a>
-          <a class="boton boton-secundario" href="#recetas" data-i18n="cta_view">לעיין במתכונים</a>
-        </div>
+      <p class="hero-kicker" data-i18n="hero_kicker">הספוט שלי למתכונים</p>
+      <h1 data-i18n-html="hero_title_html">מתכון טוב הוא פשוט <em>הרבה צעדים קטנים.</em></h1>
+      <p class="hero-sub" data-i18n="hero_sub">כל מתכון כאן כתוב מהצעד הראשון — כמויות מדויקות, זמנים, ואיך יודעים שמוכן. גם אם אף פעם לא בישלתם, מכאן מתחילים.</p>
+      <div class="hero-acciones">
+        <a class="boton" href="agregar.html" data-i18n="cta_first">להוסיף מתכון ראשון</a>
+        <a class="boton boton-secundario" href="#recetas" data-i18n="cta_view">לעיין במתכונים</a>
       </div>
-      <figure class="hero-figura">
-        <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=880&q=75"
-             alt="מצרכים טריים על שולחן מטבח" data-i18n-alt="hero_img_alt" fetchpriority="high">
-        <figcaption class="hero-nota" data-i18n="hero_note">צעד קטן, ואז עוד אחד</figcaption>
-      </figure>
+      <div class="paso-ticker" id="paso-ticker">
+        <p class="paso-label" id="paso-label"></p>
+        <p class="paso-texto" id="paso-texto"></p>
+      </div>
     </section>
 
     <!-- מתכונים -->
@@ -76,7 +74,7 @@
   </footer>
 
   <script type="module">
-    import { traerRecetas, cartaReceta, etiquetaCategoria, esc } from "./js/app.js";
+    import { traerRecetas, cartaReceta, etiquetaCategoria, esc, RECETAS_EJEMPLO, loc } from "./js/app.js";
     import { TEXTOS, getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const grilla = document.getElementById("grilla");
@@ -149,15 +147,56 @@
       pintar();
     });
 
+    // Ticker del hero: va mostrando micro-pasos reales de las recetas.
+    const tickerLabel = document.getElementById("paso-label");
+    const tickerTexto = document.getElementById("paso-texto");
+    let tickerIdx = 0;
+    let tickerTimer = null;
+
+    function muestrasTicker() {
+      const lang = getLang();
+      const muestras = [];
+      for (const r of RECETAS_EJEMPLO) {
+        const v = loc(r, lang);
+        (v.pasos || []).forEach((p, i) => {
+          if (p.length <= 120) muestras.push({ nombre: v.nombre, texto: p, i: i + 1, total: v.pasos.length });
+        });
+      }
+      return muestras;
+    }
+
+    function pintarPasoTicker(items, instantaneo = false) {
+      const m = items[tickerIdx % items.length];
+      const aplicar = () => {
+        tickerLabel.textContent = t("ticker_step", m.i, m.total, m.nombre);
+        tickerTexto.textContent = m.texto;
+        document.getElementById("paso-ticker").classList.remove("saliendo");
+      };
+      if (instantaneo) { aplicar(); return; }
+      document.getElementById("paso-ticker").classList.add("saliendo");
+      setTimeout(aplicar, 300);
+    }
+
+    function iniciarTicker() {
+      const items = muestrasTicker();
+      clearInterval(tickerTimer);
+      pintarPasoTicker(items, true);
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        tickerTimer = setInterval(() => { tickerIdx++; pintarPasoTicker(items); }, 4500);
+      }
+    }
+
     function pintarTodo() {
       document.title = t("title_index");
       pintarFiltros();
       pintar();
       pintarInspiracion();
+      iniciarTicker();
     }
 
     aplicarIdioma();
     conectarToggle(pintarTodo);
+    iniciarTicker();
 
     recetas = await traerRecetas();
     pintarTodo();
