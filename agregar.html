@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agregar receta — Recetario</title>
+  <meta name="description" content="Cargá una receta nueva al recetario: nombre, foto, ingredientes y pasos.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="cabecera">
+    <div class="contenedor cabecera-inner">
+      <a class="marca" href="index.html">Recetario<span class="punto">.</span></a>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a href="index.html">← Volver al recetario</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contenedor pagina-form">
+
+    <div id="zona-form">
+      <div class="form-encabezado">
+        <h1>Anotá una receta nueva</h1>
+        <p>Escribila como se la contarías a alguien de tu familia. A la derecha ves cómo va a quedar en el recetario.</p>
+      </div>
+
+      <div class="form-layout">
+        <form class="formulario" id="formulario" novalidate>
+
+          <div class="campo" id="campo-nombre">
+            <label for="nombre">Nombre de la receta</label>
+            <input type="text" id="nombre" name="nombre" maxlength="120" required
+                   placeholder="Milanesas a la napolitana" autocomplete="off">
+            <p class="error">Ponele un nombre a la receta.</p>
+          </div>
+
+          <div class="fila-campos">
+            <div class="campo">
+              <label for="categoria">Categoría</label>
+              <select id="categoria" name="categoria">
+                <option>Pastas</option>
+                <option>Guisos</option>
+                <option>Carnes</option>
+                <option>Ensaladas</option>
+                <option>Dulces</option>
+                <option>Panificados</option>
+                <option>Otras</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="tiempo">Tiempo (min)</label>
+              <input type="number" id="tiempo" name="tiempo" min="1" max="999" inputmode="numeric" placeholder="45">
+            </div>
+            <div class="campo">
+              <label for="porciones">Porciones</label>
+              <input type="number" id="porciones" name="porciones" min="1" max="99" inputmode="numeric" placeholder="4">
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="dificultad">Dificultad</label>
+            <select id="dificultad" name="dificultad">
+              <option>Fácil</option>
+              <option>Media</option>
+              <option>Difícil</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="imagen">Foto del plato <span class="opcional">(link a una imagen, opcional)</span></label>
+            <input type="url" id="imagen" name="imagen" placeholder="https://…" autocomplete="off">
+            <p class="ayuda">Podés buscar una foto en <a href="https://unsplash.com/es/s/fotos/comida" target="_blank" rel="noopener">Unsplash</a>, abrirla y copiar el link. Si la dejás vacía usamos una de cocina.</p>
+          </div>
+
+          <div class="campo">
+            <label for="descripcion">Descripción corta <span class="opcional">(opcional)</span></label>
+            <input type="text" id="descripcion" name="descripcion" maxlength="200"
+                   placeholder="El clásico de los domingos en casa" autocomplete="off">
+          </div>
+
+          <div class="campo" id="campo-ingredientes">
+            <label for="ingredientes">Ingredientes <span class="opcional">(uno por línea)</span></label>
+            <textarea id="ingredientes" name="ingredientes" required
+              placeholder="4 milanesas de nalga&#10;Salsa de tomate&#10;200 g de jamón cocido&#10;200 g de muzzarella"></textarea>
+            <p class="error">Anotá al menos un ingrediente.</p>
+          </div>
+
+          <div class="campo" id="campo-pasos">
+            <label for="pasos">Pasos <span class="opcional">(uno por línea)</span></label>
+            <textarea id="pasos" name="pasos" required
+              placeholder="Freí las milanesas y ponelas en una fuente para horno.&#10;Cubrí cada una con salsa, jamón y muzzarella.&#10;Gratiná hasta que el queso burbujee."></textarea>
+            <p class="error">Contá al menos un paso.</p>
+          </div>
+
+          <div>
+            <button class="boton" type="submit" id="btn-guardar">Guardar en el recetario</button>
+          </div>
+        </form>
+
+        <aside class="form-vista-previa" aria-hidden="true">
+          <p class="vista-previa-titulo">Así se va a ver</p>
+          <div id="vista-previa"></div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Estado de éxito -->
+    <div class="exito" id="zona-exito" hidden>
+      <div class="sello" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2>¡Al recetario!</h2>
+      <p id="exito-detalle">Tu receta ya quedó guardada.</p>
+      <div class="acciones">
+        <a class="boton" href="index.html">Ver el recetario</a>
+        <button class="boton boton-secundario" id="btn-otra" type="button">Cargar otra receta</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module">
+    import { guardarReceta, cartaReceta } from "./js/app.js";
+
+    const form = document.getElementById("formulario");
+    const vistaPrevia = document.getElementById("vista-previa");
+    const btnGuardar = document.getElementById("btn-guardar");
+
+    const lineas = (texto) => texto.split("\n").map((l) => l.trim()).filter(Boolean);
+
+    function leerFormulario() {
+      return {
+        nombre: form.nombre.value.trim(),
+        categoria: form.categoria.value,
+        tiempo: Number(form.tiempo.value) || null,
+        porciones: Number(form.porciones.value) || null,
+        dificultad: form.dificultad.value,
+        imagen: form.imagen.value.trim() || null,
+        descripcion: form.descripcion.value.trim() || null,
+        ingredientes: lineas(form.ingredientes.value),
+        pasos: lineas(form.pasos.value),
+      };
+    }
+
+    function actualizarVistaPrevia() {
+      const r = leerFormulario();
+      vistaPrevia.innerHTML = cartaReceta({
+        ...r,
+        id: "vista-previa",
+        nombre: r.nombre || "Tu receta",
+      });
+      // la vista previa no navega
+      vistaPrevia.querySelector("a")?.addEventListener("click", (e) => e.preventDefault());
+    }
+
+    form.addEventListener("input", actualizarVistaPrevia);
+    actualizarVistaPrevia();
+
+    function validar(r) {
+      let ok = true;
+      const marcar = (id, invalido) => {
+        document.getElementById(id).classList.toggle("invalido", invalido);
+        if (invalido) ok = false;
+      };
+      marcar("campo-nombre", !r.nombre);
+      marcar("campo-ingredientes", !r.ingredientes.length);
+      marcar("campo-pasos", !r.pasos.length);
+      if (!ok) document.querySelector(".campo.invalido input, .campo.invalido textarea")?.focus();
+      return ok;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const r = leerFormulario();
+      if (!validar(r)) return;
+
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = "Guardando…";
+      try {
+        await guardarReceta(r);
+        document.getElementById("zona-form").hidden = true;
+        document.getElementById("exito-detalle").textContent =
+          `"${r.nombre}" ya quedó guardada en el recetario.`;
+        document.getElementById("zona-exito").hidden = false;
+        window.scrollTo({ top: 0 });
+      } catch (err) {
+        console.error("Error al guardar:", err);
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = "Guardar en el recetario";
+        alert("No se pudo guardar la receta. Revisá tu conexión e intentá de nuevo.");
+      }
+    });
+
+    document.getElementById("btn-otra").addEventListener("click", () => {
+      form.reset();
+      actualizarVistaPrevia();
+      document.getElementById("zona-exito").hidden = true;
+      document.getElementById("zona-form").hidden = false;
+      btnGuardar.disabled = false;
+      btnGuardar.textContent = "Guardar en el recetario";
+      form.nombre.focus();
+    });
+  </script>
+</body>
+</html>

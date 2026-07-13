@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recetario — La cocina de casa, escrita</title>
+  <meta name="description" content="Recetario personal: guardá tus recetas de siempre, con fotos, ingredientes y pasos. Y un poco de inspiración para cuando no sabés qué cocinar.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍳</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="cabecera">
+    <div class="contenedor cabecera-inner">
+      <a class="marca" href="index.html">Recetario<span class="punto">.</span></a>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a class="solo-desktop" href="#recetas">Recetas</a>
+        <a class="solo-desktop" href="#inspiracion">Inspiración</a>
+        <a class="boton" href="agregar.html">+ Agregar receta</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="contenedor hero">
+      <div>
+        <h1>La cocina de casa, <em>escrita.</em></h1>
+        <p>Las recetas que siempre terminás buscando en el chat con tu mamá, en capturas de pantalla o en papelitos sueltos: acá, con foto, ingredientes y pasos.</p>
+        <div class="hero-acciones">
+          <a class="boton" href="agregar.html">Cargar mi primera receta</a>
+          <a class="boton boton-secundario" href="#recetas">Ver el recetario</a>
+        </div>
+      </div>
+      <figure class="hero-figura">
+        <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=880&q=75" alt="Ingredientes frescos sobre una mesa de cocina" fetchpriority="high">
+        <figcaption class="hero-nota">como la hacía la abuela</figcaption>
+      </figure>
+    </section>
+
+    <!-- Recetas -->
+    <section id="recetas" class="contenedor seccion">
+      <div class="seccion-titulo">
+        <h2>El recetario</h2>
+        <span class="linea" aria-hidden="true"></span>
+        <span class="contador" id="contador-recetas"></span>
+      </div>
+
+      <div class="filtros" id="filtros" role="group" aria-label="Filtrar por categoría"></div>
+
+      <div class="grilla" id="grilla">
+        <div class="cargando">Buscando en la alacena…</div>
+      </div>
+    </section>
+
+    <!-- Inspiración -->
+    <section id="inspiracion" class="inspiracion seccion">
+      <div class="contenedor">
+        <div class="seccion-titulo">
+          <h2>Para inspirarse</h2>
+          <span class="linea" aria-hidden="true"></span>
+        </div>
+        <ul class="inspiracion-lista">
+          <li>
+            <a href="https://www.paulinacocina.net" target="_blank" rel="noopener">
+              <span class="inspiracion-num">01</span>
+              <span class="inspiracion-nombre">Paulina Cocina</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">Recetas argentinas explicadas con humor y sin vueltas.</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://elgourmet.com" target="_blank" rel="noopener">
+              <span class="inspiracion-num">02</span>
+              <span class="inspiracion-nombre">El Gourmet</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">Cocina latinoamericana de autor, de los programas de siempre.</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.recetasgratis.net" target="_blank" rel="noopener">
+              <span class="inspiracion-num">03</span>
+              <span class="inspiracion-nombre">Recetas Gratis</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">Un catálogo enorme en español para resolver el día a día.</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bonappetit.com" target="_blank" rel="noopener">
+              <span class="inspiracion-num">04</span>
+              <span class="inspiracion-nombre">Bon Appétit</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">Fotos hermosas y técnicas que suben el nivel de cualquier plato.</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.seriouseats.com" target="_blank" rel="noopener">
+              <span class="inspiracion-num">05</span>
+              <span class="inspiracion-nombre">Serious Eats</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">La ciencia detrás de cada receta, probada hasta el detalle.</p>
+            </a>
+          </li>
+          <li>
+            <a href="https://tasty.co" target="_blank" rel="noopener">
+              <span class="inspiracion-num">06</span>
+              <span class="inspiracion-nombre">Tasty</span>
+              <span class="inspiracion-flecha" aria-hidden="true">→</span>
+              <p class="inspiracion-desc">Videos cortos e ideas rápidas para cuando no hay plan.</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="contenedor pie">
+    <span>Recetario — hecho en casa, con hambre.</span>
+    <a href="agregar.html">Agregar una receta</a>
+  </footer>
+
+  <script type="module">
+    import { traerRecetas, cartaReceta, esc } from "./js/app.js";
+
+    const grilla = document.getElementById("grilla");
+    const filtros = document.getElementById("filtros");
+    const contador = document.getElementById("contador-recetas");
+
+    let recetas = [];
+    let categoriaActiva = "Todas";
+
+    function pintar() {
+      const visibles = categoriaActiva === "Todas"
+        ? recetas
+        : recetas.filter((r) => r.categoria === categoriaActiva);
+
+      contador.textContent = `${visibles.length} receta${visibles.length === 1 ? "" : "s"}`;
+
+      if (!visibles.length) {
+        grilla.innerHTML = `
+          <div class="vacio">
+            <div class="icono">mmm…</div>
+            <p>Todavía no hay recetas en esta categoría.<br>
+            <a href="agregar.html">Cargá la primera</a> y estrenala.</p>
+          </div>`;
+        return;
+      }
+      grilla.innerHTML = visibles.map(cartaReceta).join("");
+    }
+
+    function pintarFiltros() {
+      const categorias = ["Todas", ...new Set(recetas.map((r) => r.categoria).filter(Boolean))];
+      filtros.innerHTML = categorias.map((c) =>
+        `<button class="chip" aria-pressed="${c === categoriaActiva}" data-cat="${esc(c)}">${esc(c)}</button>`
+      ).join("");
+    }
+
+    filtros.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      categoriaActiva = chip.dataset.cat;
+      pintarFiltros();
+      pintar();
+    });
+
+    recetas = await traerRecetas();
+    pintarFiltros();
+    pintar();
+  </script>
+</body>
+</html>
