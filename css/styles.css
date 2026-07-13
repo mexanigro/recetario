@@ -147,8 +147,33 @@ a { color: inherit; }
    Sin foto, sin split de dos columnas. El hero ES el concepto del
    sitio: pasos chiquitos. Mobile-first. */
 
+/* fondo full-bleed con foto de comida (la misma del OG) + velo cálido */
+.hero-bg {
+  position: relative;
+  background: #1a1310 url("../og/fondo-hero.jpg") center/cover no-repeat;
+}
+
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, oklch(20% 0.03 45 / 0.78) 0%, oklch(20% 0.03 45 / 0.6) 52%, oklch(20% 0.03 45 / 0.68) 100%);
+  pointer-events: none;
+}
+
+.hero-bg > .contenedor { position: relative; z-index: 1; }
+
 .hero {
   padding-block: clamp(2.8rem, 9vw, 5.5rem) clamp(2rem, 5vw, 3.5rem);
+}
+
+/* sobre la foto, el texto del hero pasa a claro */
+.hero-bg .hero-kicker { color: oklch(85% 0.07 55); }
+.hero-bg .hero-kicker::after { background: oklch(85% 0.07 55); opacity: 0.55; }
+
+.hero-bg h1 {
+  color: oklch(97% 0.012 80);
+  text-shadow: 0 2px 24px oklch(20% 0.03 45 / 0.4);
 }
 
 .hero-kicker {

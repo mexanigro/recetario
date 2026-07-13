@@ -41,20 +41,22 @@
   </header>
 
   <main>
-    <!-- Hero: panel personal — saludo, receta del día y notas -->
-    <section class="contenedor hero">
-      <p class="hero-kicker" id="saludo">בוקר טוב ☀️</p>
-      <h1 data-i18n="hero_pregunta">מה מבשלים היום?</h1>
+    <!-- Hero: panel personal sobre foto de comida — saludo, receta del día y notas -->
+    <section class="hero-bg">
+      <div class="contenedor hero">
+        <p class="hero-kicker" id="saludo">בוקר טוב ☀️</p>
+        <h1 data-i18n="hero_pregunta">מה מבשלים היום?</h1>
 
-      <div class="panel">
-        <a class="panel-carta diaria" id="diaria" href="#recetas">
-          <p class="panel-label" data-i18n="daily_label">המתכון של היום</p>
-          <div class="diaria-cuerpo" id="diaria-cuerpo"></div>
-        </a>
+        <div class="panel">
+          <a class="panel-carta diaria" id="diaria" href="#recetas">
+            <p class="panel-label" data-i18n="daily_label">המתכון של היום</p>
+            <div class="diaria-cuerpo" id="diaria-cuerpo"></div>
+          </a>
 
-        <div class="panel-carta notas">
-          <p class="panel-label"><span data-i18n="notes_label">פתקים ורשימת קניות</span> <span class="notas-guardado" id="notas-guardado" data-i18n="notes_saved">נשמר ✓</span></p>
-          <textarea id="notas" data-i18n-ph="notes_ph" placeholder="חלב, ביצים, קמח… או כל תזכורת. נשמר אוטומטית במכשיר הזה."></textarea>
+          <div class="panel-carta notas">
+            <p class="panel-label"><span data-i18n="notes_label">פתקים ורשימת קניות</span> <span class="notas-guardado" id="notas-guardado" data-i18n="notes_saved">נשמר ✓</span></p>
+            <textarea id="notas" data-i18n-ph="notes_ph" placeholder="חלב, ביצים, קמח… או כל תזכורת. נשמר אוטומטית במכשיר הזה."></textarea>
+          </div>
         </div>
       </div>
     </section>
