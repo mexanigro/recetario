@@ -643,12 +643,14 @@ export function loc(r, lang = getLang()) {
 
 export function etiquetaCategoria(r, lang = getLang()) {
   const cats = TEXTOS[lang].cats;
-  return cats[r.categoria] || r.categoria || cats.other;
+  const clave = loc(r, lang).categoria ?? r.categoria;
+  return cats[clave] || clave || cats.other;
 }
 
 export function etiquetaDificultad(r, lang = getLang()) {
   const diffs = TEXTOS[lang].diffs;
-  return diffs[r.dificultad] || r.dificultad || "—";
+  const clave = loc(r, lang).dificultad ?? r.dificultad;
+  return diffs[clave] || clave || "—";
 }
 
 // Video: si la receta trae un link propio, se usa ese. Si no,

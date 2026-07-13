@@ -22,14 +22,22 @@ export const TEXTOS = {
     servings_short: "מנות",
     example: "דוגמה",
 
-    // דף הבית
-    hero_kicker: "הספוט שלי למתכונים",
-    hero_title_html: "מתכון טוב הוא פשוט <em>הרבה צעדים קטנים.</em>",
-    hero_sub: "כל מתכון כאן כתוב מהצעד הראשון — כמויות מדויקות, זמנים, ואיך יודעים שמוכן. גם אם אף פעם לא בישלתם, מכאן מתחילים.",
-    ticker_step: (i, total, nombre) => `שלב ${i} מתוך ${total} · ${nombre}`,
+    // דף הבית — פאנל אישי
+    saludo_manana: "בוקר טוב ☀️",
+    saludo_mediodia: "צהריים טובים 🌤️",
+    saludo_tarde: "ערב טוב 🌆",
+    saludo_noche: "לילה טוב 🌙",
+    hero_pregunta: "מה מבשלים היום?",
+    daily_label: "המתכון של היום",
+    daily_cta: "למתכון ←",
+    notes_label: "פתקים ורשימת קניות",
+    notes_ph: "חלב, ביצים, קמח… או כל תזכורת. נשמר אוטומטית במכשיר הזה.",
+    notes_saved: "נשמר ✓",
+    nav_aria: "ניווט ראשי",
     cta_first: "להוסיף מתכון ראשון",
     cta_view: "לעיין במתכונים",
     sec_recipes: "המתכונים",
+    empty_icon: "מממ…",
     sec_inspiration: "מקורות השראה",
     filter_all: "הכל",
     loading_pantry: "מחטטים במזווה…",
@@ -111,7 +119,7 @@ export const TEXTOS = {
     success_edit: (nombre) => `„${nombre}" עודכן בהצלחה.`,
     video_note: "",
 
-    cats: { pasta: "פסטה", stew: "תבשילים", meat: "בשרים", salad: "סלטים", sweet: "מתוקים", baked: "מאפים", other: "עוד" },
+    cats: { breakfast: "ארוחת בוקר", pasta: "פסטה", stew: "תבשילים", meat: "בשרים", salad: "סלטים", sweet: "מתוקים", baked: "מאפים", other: "עוד" },
     diffs: { easy: "קל", medium: "בינוני", hard: "מאתגר" },
   },
 
@@ -131,13 +139,21 @@ export const TEXTOS = {
     servings_short: "servings",
     example: "Sample",
 
-    hero_kicker: "My recipe spot",
-    hero_title_html: "A good recipe is just <em>a lot of small steps.</em>",
-    hero_sub: "Every recipe here starts at step one — exact amounts, timings, and how to tell when it's done. Never cooked before? This is where you start.",
-    ticker_step: (i, total, nombre) => `Step ${i} of ${total} · ${nombre}`,
+    saludo_manana: "Good morning ☀️",
+    saludo_mediodia: "Good afternoon 🌤️",
+    saludo_tarde: "Good evening 🌆",
+    saludo_noche: "Good night 🌙",
+    hero_pregunta: "What are we cooking today?",
+    daily_label: "Today's recipe",
+    daily_cta: "Open the recipe →",
+    notes_label: "Notes & shopping list",
+    notes_ph: "Milk, eggs, flour… or any reminder. Saves automatically on this device.",
+    notes_saved: "Saved ✓",
+    nav_aria: "Main navigation",
     cta_first: "Add my first recipe",
     cta_view: "Browse the recipes",
     sec_recipes: "The recipes",
+    empty_icon: "hmm…",
     sec_inspiration: "Places to get inspired",
     filter_all: "All",
     loading_pantry: "Rummaging through the pantry…",
@@ -217,7 +233,7 @@ export const TEXTOS = {
     success_edit: (nombre) => `"${nombre}" was updated.`,
     video_note: "",
 
-    cats: { pasta: "Pasta", stew: "Stews", meat: "Meat", salad: "Salads", sweet: "Sweets", baked: "Baking", other: "More" },
+    cats: { breakfast: "Breakfast", pasta: "Pasta", stew: "Stews", meat: "Meat", salad: "Salads", sweet: "Sweets", baked: "Baking", other: "More" },
     diffs: { easy: "Easy", medium: "Medium", hard: "Challenging" },
   },
 };
@@ -258,6 +274,10 @@ export function aplicarIdioma() {
   document.querySelectorAll("[data-i18n-alt]").forEach((el) => {
     const v = d[el.dataset.i18nAlt];
     if (typeof v === "string") el.alt = v;
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    const v = d[el.dataset.i18nAria];
+    if (typeof v === "string") el.setAttribute("aria-label", v);
   });
 
   const toggle = document.getElementById("lang-toggle");

@@ -194,38 +194,101 @@ a { color: inherit; }
 
 .hero-acciones { display: flex; gap: 0.9rem; flex-wrap: wrap; }
 
-/* tarjeta que va mostrando pasos reales de las recetas */
-.paso-ticker {
-  margin-top: 2.2rem;
-  max-width: 620px;
-  background: var(--blanco-calido);
-  border: 1.5px solid var(--borde);
-  border-radius: 10px;
-  padding: 1rem 1.25rem 1.1rem;
-  box-shadow: var(--sombra-carta);
-  transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+/* panel personal: receta del día + notas */
+.panel {
+  margin-top: 1.8rem;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.1rem;
+  max-width: 880px;
 }
 
-.paso-ticker.saliendo { opacity: 0; transform: translateY(6px); }
+@media (max-width: 720px) { .panel { grid-template-columns: 1fr; } }
 
-.paso-label {
-  margin: 0 0 0.3rem;
+.panel-carta {
+  background: var(--blanco-calido);
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  padding: 1rem 1.2rem 1.1rem;
+  box-shadow: var(--sombra-carta);
+}
+
+.panel-label {
+  margin: 0 0 0.7rem;
   font-family: var(--serif);
   font-style: italic;
   font-size: 0.95rem;
   color: var(--pimenton);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
 }
 
-.paso-texto {
-  margin: 0;
-  color: var(--tinta-suave);
-  line-height: 1.55;
-  min-height: 2.6em; /* que no salte la altura entre pasos */
+/* la receta del día */
+a.diaria {
+  text-decoration: none;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .paso-ticker { transition: none; }
+@media (hover: hover) and (pointer: fine) {
+  a.diaria:hover { transform: translateY(-2px); box-shadow: var(--sombra-carta-hover); }
 }
+
+a.diaria:active { transform: scale(0.99); }
+
+.diaria-cuerpo {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.diaria-cuerpo img {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.diaria-cuerpo h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 0.25rem;
+}
+
+.diaria-meta { margin: 0 0 0.35rem; font-size: 0.82rem; color: var(--tinta-tenue); }
+
+.diaria-link { margin: 0; font-size: 0.86rem; font-weight: 600; color: var(--pimenton); }
+
+/* notas con renglones de cuaderno */
+.notas textarea {
+  width: 100%;
+  min-height: 6.8rem;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--tinta);
+  line-height: 1.8em;
+  background-image: repeating-linear-gradient(transparent, transparent calc(1.8em - 1px), var(--borde) calc(1.8em - 1px), var(--borde) 1.8em);
+}
+
+.notas textarea:focus { outline: none; }
+
+.notas-guardado {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--oliva);
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.notas-guardado.visible { opacity: 1; }
 
 /* ---------- Secciones ---------- */
 

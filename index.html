@@ -16,7 +16,7 @@
   <header class="cabecera">
     <div class="contenedor cabecera-inner">
       <a class="marca" href="index.html"><span data-i18n="brand">פינת המתכונים</span><span class="punto">.</span></a>
-      <nav class="nav-links" aria-label="ניווט ראשי">
+      <nav class="nav-links" aria-label="ניווט ראשי" data-i18n-aria="nav_aria">
         <a class="solo-desktop" href="#recetas" data-i18n="nav_recipes">מתכונים</a>
         <a class="solo-desktop" href="#inspiracion" data-i18n="nav_inspiration">השראה</a>
         <button class="chip" id="lang-toggle" type="button">English</button>
@@ -26,18 +26,21 @@
   </header>
 
   <main>
-    <!-- Hero: tipográfico, sin foto — el ticker muestra pasos reales -->
+    <!-- Hero: panel personal — saludo, receta del día y notas -->
     <section class="contenedor hero">
-      <p class="hero-kicker" data-i18n="hero_kicker">הספוט שלי למתכונים</p>
-      <h1 data-i18n-html="hero_title_html">מתכון טוב הוא פשוט <em>הרבה צעדים קטנים.</em></h1>
-      <p class="hero-sub" data-i18n="hero_sub">כל מתכון כאן כתוב מהצעד הראשון — כמויות מדויקות, זמנים, ואיך יודעים שמוכן. גם אם אף פעם לא בישלתם, מכאן מתחילים.</p>
-      <div class="hero-acciones">
-        <a class="boton" href="agregar.html" data-i18n="cta_first">להוסיף מתכון ראשון</a>
-        <a class="boton boton-secundario" href="#recetas" data-i18n="cta_view">לעיין במתכונים</a>
-      </div>
-      <div class="paso-ticker" id="paso-ticker">
-        <p class="paso-label" id="paso-label"></p>
-        <p class="paso-texto" id="paso-texto"></p>
+      <p class="hero-kicker" id="saludo">בוקר טוב ☀️</p>
+      <h1 data-i18n="hero_pregunta">מה מבשלים היום?</h1>
+
+      <div class="panel">
+        <a class="panel-carta diaria" id="diaria" href="#recetas">
+          <p class="panel-label" data-i18n="daily_label">המתכון של היום</p>
+          <div class="diaria-cuerpo" id="diaria-cuerpo"></div>
+        </a>
+
+        <div class="panel-carta notas">
+          <p class="panel-label"><span data-i18n="notes_label">פתקים ורשימת קניות</span> <span class="notas-guardado" id="notas-guardado" data-i18n="notes_saved">נשמר ✓</span></p>
+          <textarea id="notas" data-i18n-ph="notes_ph" placeholder="חלב, ביצים, קמח… או כל תזכורת. נשמר אוטומטית במכשיר הזה."></textarea>
+        </div>
       </div>
     </section>
 
@@ -74,7 +77,7 @@
   </footer>
 
   <script type="module">
-    import { traerRecetas, cartaReceta, etiquetaCategoria, esc, RECETAS_EJEMPLO, loc } from "./js/app.js";
+    import { traerRecetas, cartaReceta, etiquetaCategoria, esc, loc, IMAGEN_FALLBACK } from "./js/app.js";
     import { TEXTOS, getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const grilla = document.getElementById("grilla");
@@ -106,7 +109,7 @@
       if (!visibles.length) {
         grilla.innerHTML = `
           <div class="vacio">
-            <div class="icono">מממ…</div>
+            <div class="icono">${t("empty_icon")}</div>
             <p>${t("empty_html")}</p>
           </div>`;
         return;
@@ -147,56 +150,61 @@
       pintar();
     });
 
-    // Ticker del hero: va mostrando micro-pasos reales de las recetas.
-    const tickerLabel = document.getElementById("paso-label");
-    const tickerTexto = document.getElementById("paso-texto");
-    let tickerIdx = 0;
-    let tickerTimer = null;
+    // ---------- panel personal ----------
 
-    function muestrasTicker() {
+    // saludo según la hora del día
+    function pintarSaludo() {
+      const h = new Date().getHours();
+      const clave = h >= 5 && h < 12 ? "saludo_manana"
+                  : h >= 12 && h < 17 ? "saludo_mediodia"
+                  : h >= 17 && h < 22 ? "saludo_tarde"
+                  : "saludo_noche";
+      document.getElementById("saludo").textContent = t(clave);
+    }
+
+    // receta del día: rota una vez por día, determinística
+    function pintarDiaria() {
+      const cuerpo = document.getElementById("diaria-cuerpo");
+      if (!recetas.length) { cuerpo.innerHTML = ""; return; }
+      const dia = Math.floor(Date.now() / 86400000);
+      const r = recetas[dia % recetas.length];
       const lang = getLang();
-      const muestras = [];
-      for (const r of RECETAS_EJEMPLO) {
-        const v = loc(r, lang);
-        (v.pasos || []).forEach((p, i) => {
-          if (p.length <= 120) muestras.push({ nombre: v.nombre, texto: p, i: i + 1, total: v.pasos.length });
-        });
-      }
-      return muestras;
+      const v = loc(r, lang);
+      const d = TEXTOS[lang];
+      document.getElementById("diaria").href = `receta.html?id=${encodeURIComponent(r.id)}`;
+      cuerpo.innerHTML = `
+        <img src="${esc(v.imagen || IMAGEN_FALLBACK)}" alt="" onerror="this.src='${IMAGEN_FALLBACK}'">
+        <div>
+          <h3>${esc(v.nombre)}</h3>
+          <p class="diaria-meta">${esc(etiquetaCategoria(r, lang))} · ${esc(String(v.tiempo || "—"))} ${esc(d.min)} · ${esc(String(v.porciones || "—"))} ${esc(d.servings_short)}</p>
+          <p class="diaria-link">${t("daily_cta")}</p>
+        </div>`;
     }
 
-    function pintarPasoTicker(items, instantaneo = false) {
-      const m = items[tickerIdx % items.length];
-      const aplicar = () => {
-        tickerLabel.textContent = t("ticker_step", m.i, m.total, m.nombre);
-        tickerTexto.textContent = m.texto;
-        document.getElementById("paso-ticker").classList.remove("saliendo");
-      };
-      if (instantaneo) { aplicar(); return; }
-      document.getElementById("paso-ticker").classList.add("saliendo");
-      setTimeout(aplicar, 300);
-    }
-
-    function iniciarTicker() {
-      const items = muestrasTicker();
-      clearInterval(tickerTimer);
-      pintarPasoTicker(items, true);
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        tickerTimer = setInterval(() => { tickerIdx++; pintarPasoTicker(items); }, 4500);
-      }
-    }
+    // notas con autoguardado en el dispositivo
+    const notas = document.getElementById("notas");
+    const notasGuardado = document.getElementById("notas-guardado");
+    let notasTimer = null;
+    notas.value = localStorage.getItem("recetario-notas") || "";
+    notas.addEventListener("input", () => {
+      localStorage.setItem("recetario-notas", notas.value);
+      notasGuardado.classList.add("visible");
+      clearTimeout(notasTimer);
+      notasTimer = setTimeout(() => notasGuardado.classList.remove("visible"), 1500);
+    });
 
     function pintarTodo() {
       document.title = t("title_index");
+      pintarSaludo();
+      pintarDiaria();
       pintarFiltros();
       pintar();
       pintarInspiracion();
-      iniciarTicker();
     }
 
     aplicarIdioma();
     conectarToggle(pintarTodo);
-    iniciarTicker();
+    pintarSaludo();
 
     recetas = await traerRecetas();
     pintarTodo();

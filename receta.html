@@ -15,7 +15,7 @@
   <header class="cabecera">
     <div class="contenedor cabecera-inner">
       <a class="marca" href="index.html"><span data-i18n="brand">פינת המתכונים</span><span class="punto">.</span></a>
-      <nav class="nav-links" aria-label="ניווט ראשי">
+      <nav class="nav-links" aria-label="ניווט ראשי" data-i18n-aria="nav_aria">
         <button class="chip" id="lang-toggle" type="button">English</button>
         <a href="index.html" data-i18n="back_home">→ חזרה למתכונים</a>
         <a class="boton solo-desktop" href="agregar.html" data-i18n="nav_add">+ הוספת מתכון</a>
@@ -90,10 +90,10 @@
               <ol class="pasos">
                 ${(v.pasos || []).map((p) => `<li><p>${esc(p)}</p></li>`).join("")}
               </ol>
-              ${receta.tip ? `
+              ${v.tip ? `
               <aside class="receta-tip">
                 <p class="tip-label">${t("tip_label")}</p>
-                <p>${esc(receta.tip)}</p>
+                <p>${esc(v.tip)}</p>
               </aside>` : ""}
             </div>
           </section>
