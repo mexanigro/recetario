@@ -110,7 +110,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "medium",
     tiempo: 90,
     porciones: 6,
-    imagen: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1696935257293-9ec4f03074a1?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון פאי בשר ותפוחי אדמה",
     fuente: { nombre: "Paulina Cocina", url: "https://www.paulinacocina.net/pastel-de-papas/15" },
     he: {
@@ -193,7 +193,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "easy",
     tiempo: 35,
     porciones: 3,
-    imagen: "https://images.unsplash.com/photo-1590412200988-a436970781fa?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1682622110419-b671026a4536?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון שקשוקה",
     fuente: { nombre: "Yotam Ottolenghi", url: "https://ottolenghi.co.uk/pages/recipes/shakshuka" },
     he: {
@@ -325,7 +325,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "easy",
     tiempo: 30,
     porciones: 3,
-    imagen: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1669277038512-2dc8b3a2aac8?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון פנקייקים אווריריים",
     fuente: { nombre: "AllRecipes — Good Old-Fashioned Pancakes", url: "https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/" },
     he: {
@@ -388,7 +388,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "easy",
     tiempo: 75,
     porciones: 6,
-    imagen: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1714062105876-1756a22c4caf?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון תבשיל עדשים עם בשר",
     fuente: { nombre: "Paulina Cocina", url: "https://www.paulinacocina.net/guiso-lentejas-receta-infalible/10685" },
     he: {
@@ -459,7 +459,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "medium",
     tiempo: 75,
     porciones: 4,
-    imagen: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1676300184847-4ee4030409c0?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון ניוקי תפוחי אדמה",
     fuente: { nombre: "GialloZafferano", url: "https://www.giallozafferano.com/recipes/Potato-gnocchi.html" },
     he: {
@@ -524,7 +524,7 @@ export const RECETAS_EJEMPLO = [
     dificultad: "easy",
     tiempo: 60,
     porciones: 12,
-    imagen: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=70",
+    imagen: "https://images.unsplash.com/photo-1602351447937-745cb720612f?auto=format&fit=crop&w=900&q=70",
     videoQuery: "מתכון עוגת שוקולד קלה",
     fuente: { nombre: "Hershey's", url: "https://www.hersheyland.com/recipes/hersheys-perfectly-chocolate-chocolate-cake.html" },
     he: {
@@ -667,7 +667,8 @@ export function linkVideo(r, lang = getLang()) {
 // Render
 // ------------------------------------------------------------
 
-export const IMAGEN_FALLBACK = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=70";
+// Respaldo para recetas sin foto: "variedad de alimentos cocinados" (solo comida, verificado)
+export const IMAGEN_FALLBACK = "https://images.unsplash.com/photo-1562571708-527276a391ac?auto=format&fit=crop&w=900&q=70";
 
 export function esc(texto) {
   const div = document.createElement("div");
