@@ -8,7 +8,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc,
+  getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc,
   query, orderBy, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { TEXTOS, getLang } from "./i18n.js";
@@ -630,6 +630,21 @@ export async function guardarReceta(receta) {
 export async function actualizarReceta(id, receta) {
   await updateDoc(doc(db, COL, id), { ...receta, editado: serverTimestamp() });
   return id;
+}
+
+export async function eliminarReceta(id) {
+  await deleteDoc(doc(db, COL, id));
+}
+
+// Hora y día según Israel (la web es para uso en Israel,
+// sin importar desde dónde se abra).
+export function horaIsrael() {
+  return Number(new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "Asia/Jerusalem" }).format(new Date())) % 24;
+}
+
+export function diaIsrael() {
+  const fecha = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem" }).format(new Date());
+  return Math.floor(Date.parse(fecha) / 86400000);
 }
 
 // ------------------------------------------------------------

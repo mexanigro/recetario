@@ -918,6 +918,76 @@ a.diaria:active { transform: scale(0.99); }
   line-height: 1.3;
 }
 
+/* ---------- zona de borrado (acción destructiva, separada) ---------- */
+
+.zona-peligro {
+  margin-block: 1rem 3rem;
+  padding-top: 1.6rem;
+  border-top: 1px dashed var(--borde);
+}
+
+.boton-peligro {
+  background: none;
+  border: 1.5px solid oklch(75% 0.08 28);
+  color: oklch(48% 0.16 28);
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, transform 140ms var(--ease-out);
+}
+
+.boton-peligro:hover { background: oklch(95% 0.03 28); }
+.boton-peligro:active { transform: scale(0.97); }
+
+.confirmar-borrado {
+  max-width: 480px;
+  background: oklch(96% 0.025 28);
+  border: 1.5px solid oklch(82% 0.06 28);
+  border-radius: 10px;
+  padding: 1.1rem 1.3rem;
+}
+
+.confirmar-borrado p { margin: 0 0 0.6rem; font-size: 0.92rem; color: oklch(40% 0.13 28); }
+
+.confirmar-borrado .palabra-clave { margin: 0 0 0.7rem; }
+
+.confirmar-borrado code {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: var(--blanco-calido);
+  border: 1px solid oklch(82% 0.06 28);
+  border-radius: 6px;
+  padding: 0.25rem 0.7rem;
+  user-select: all; /* un toque la selecciona entera para copiar */
+}
+
+.confirmar-borrado input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 1rem;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid oklch(82% 0.06 28);
+  border-radius: 8px;
+  background: var(--blanco-calido);
+  margin-bottom: 0.8rem;
+}
+
+.confirmar-borrado input:focus { outline: none; border-color: oklch(55% 0.16 28); }
+
+.acciones-borrado { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+
+.boton-peligro-lleno {
+  background: oklch(48% 0.16 28);
+}
+
+.boton-peligro-lleno:hover:not(:disabled) { background: oklch(42% 0.15 28); }
+
+.boton-peligro-lleno:disabled { opacity: 0.45; cursor: not-allowed; }
+
 .cargando, .no-encontrada {
   text-align: center;
   padding: 5rem 1rem;

@@ -77,7 +77,7 @@
   </footer>
 
   <script type="module">
-    import { traerRecetas, cartaReceta, etiquetaCategoria, esc, loc, IMAGEN_FALLBACK } from "./js/app.js";
+    import { traerRecetas, cartaReceta, etiquetaCategoria, esc, loc, IMAGEN_FALLBACK, horaIsrael, diaIsrael } from "./js/app.js";
     import { TEXTOS, getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const grilla = document.getElementById("grilla");
@@ -152,9 +152,9 @@
 
     // ---------- panel personal ----------
 
-    // saludo según la hora del día
+    // saludo según la hora del día en Israel
     function pintarSaludo() {
-      const h = new Date().getHours();
+      const h = horaIsrael();
       const clave = h >= 5 && h < 12 ? "saludo_manana"
                   : h >= 12 && h < 17 ? "saludo_mediodia"
                   : h >= 17 && h < 22 ? "saludo_tarde"
@@ -162,12 +162,11 @@
       document.getElementById("saludo").textContent = t(clave);
     }
 
-    // receta del día: rota una vez por día, determinística
+    // receta del día: rota una vez por día (día israelí), determinística
     function pintarDiaria() {
       const cuerpo = document.getElementById("diaria-cuerpo");
       if (!recetas.length) { cuerpo.innerHTML = ""; return; }
-      const dia = Math.floor(Date.now() / 86400000);
-      const r = recetas[dia % recetas.length];
+      const r = recetas[diaIsrael() % recetas.length];
       const lang = getLang();
       const v = loc(r, lang);
       const d = TEXTOS[lang];

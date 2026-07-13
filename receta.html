@@ -33,7 +33,7 @@
   </footer>
 
   <script type="module">
-    import { traerReceta, loc, etiquetaCategoria, etiquetaDificultad, linkVideo, IMAGEN_FALLBACK, esc } from "./js/app.js";
+    import { traerReceta, eliminarReceta, loc, etiquetaCategoria, etiquetaDificultad, linkVideo, IMAGEN_FALLBACK, esc } from "./js/app.js";
     import { getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const contenido = document.getElementById("contenido");
@@ -97,7 +97,61 @@
               </aside>` : ""}
             </div>
           </section>
+
+          ${!receta.ejemplo ? `
+          <section class="zona-peligro">
+            <button class="boton-peligro" id="btn-borrar" type="button">${t("delete_btn")}</button>
+            <div class="confirmar-borrado" id="confirmar-borrado" hidden>
+              <p>${t("delete_prompt")}</p>
+              <p class="palabra-clave"><code>${t("delete_word")}</code></p>
+              <input type="text" id="input-borrar" autocomplete="off" dir="auto">
+              <div class="acciones-borrado">
+                <button class="boton boton-peligro-lleno" id="btn-borrar-confirmar" type="button" disabled>${t("delete_confirm")}</button>
+                <button class="boton boton-secundario" id="btn-borrar-cancelar" type="button">${t("delete_cancel")}</button>
+              </div>
+            </div>
+          </section>` : ""}
         </article>`;
+
+      conectarBorrado();
+    }
+
+    function conectarBorrado() {
+      const btn = document.getElementById("btn-borrar");
+      if (!btn) return;
+      const zona = document.getElementById("confirmar-borrado");
+      const input = document.getElementById("input-borrar");
+      const confirmar = document.getElementById("btn-borrar-confirmar");
+
+      btn.addEventListener("click", () => {
+        zona.hidden = false;
+        btn.hidden = true;
+        input.focus();
+      });
+
+      document.getElementById("btn-borrar-cancelar").addEventListener("click", () => {
+        zona.hidden = true;
+        btn.hidden = false;
+        input.value = "";
+        confirmar.disabled = true;
+      });
+
+      // solo se habilita si la palabra coincide exactamente
+      input.addEventListener("input", () => {
+        confirmar.disabled = input.value.trim() !== t("delete_word");
+      });
+
+      confirmar.addEventListener("click", async () => {
+        confirmar.disabled = true;
+        try {
+          await eliminarReceta(receta.id);
+          location.href = "index.html";
+        } catch (err) {
+          console.error("No se pudo eliminar:", err);
+          confirmar.disabled = false;
+          alert(t("delete_error"));
+        }
+      });
     }
 
     aplicarIdioma();
