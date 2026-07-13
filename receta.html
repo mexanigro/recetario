@@ -1,95 +1,103 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Receta — Recetario</title>
+  <title>מתכון — ספר המתכונים</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400..900&family=Assistant:wght@400..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
   <header class="cabecera">
     <div class="contenedor cabecera-inner">
-      <a class="marca" href="index.html">Recetario<span class="punto">.</span></a>
-      <nav class="nav-links" aria-label="Navegación principal">
-        <a href="index.html">← Volver al recetario</a>
-        <a class="boton" href="agregar.html">+ Agregar receta</a>
+      <a class="marca" href="index.html"><span data-i18n="brand">ספר המתכונים</span><span class="punto">.</span></a>
+      <nav class="nav-links" aria-label="ניווט ראשי">
+        <button class="chip" id="lang-toggle" type="button">English</button>
+        <a href="index.html" data-i18n="back_home">→ חזרה לספר המתכונים</a>
+        <a class="boton solo-desktop" href="agregar.html" data-i18n="nav_add">+ הוספת מתכון</a>
       </nav>
     </div>
   </header>
 
   <main id="contenido" class="contenedor">
-    <div class="cargando">Buscando la receta…</div>
+    <div class="cargando" data-i18n="loading_recipe">מחפשים את המתכון…</div>
   </main>
 
   <footer class="contenedor pie">
-    <span>Recetario — hecho en casa, con hambre.</span>
-    <a href="agregar.html">Agregar una receta</a>
+    <span data-i18n="footer_tag">ספר המתכונים — נעשה בבית, עם רעב.</span>
+    <a href="agregar.html" data-i18n="footer_add">הוסיפו מתכון</a>
   </footer>
 
   <script type="module">
-    import { traerReceta, esc } from "./js/app.js";
+    import { traerReceta, loc, etiquetaCategoria, etiquetaDificultad, linkVideo, IMAGEN_FALLBACK, esc } from "./js/app.js";
+    import { getLang, t, aplicarIdioma, conectarToggle } from "./js/i18n.js";
 
     const contenido = document.getElementById("contenido");
     const id = new URLSearchParams(location.search).get("id");
+    let receta = null;
 
-    const IMAGEN_FALLBACK = "https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=1200&q=75";
-
-    function pintar(r) {
-      document.title = `${r.nombre} — Recetario`;
+    function pintar() {
+      if (!receta) {
+        contenido.innerHTML = `<div class="no-encontrada">${t("notfound_html")}</div>`;
+        return;
+      }
+      const lang = getLang();
+      const v = loc(receta, lang);
+      document.title = `${v.nombre} — ${t("brand")}`;
       contenido.innerHTML = `
         <article>
           <section class="receta-hero">
-            <img class="receta-hero-img" src="${esc(r.imagen || IMAGEN_FALLBACK)}"
-                 alt="${esc(r.nombre)}" onerror="this.src='${IMAGEN_FALLBACK}'">
+            <img class="receta-hero-img" src="${esc(v.imagen || IMAGEN_FALLBACK)}"
+                 alt="${esc(v.nombre)}" onerror="this.src='${IMAGEN_FALLBACK}'">
             <div>
-              <span class="etiqueta">${esc(r.categoria || "Receta")}${r.ejemplo ? " · ejemplo" : ""}</span>
-              <h1>${esc(r.nombre)}</h1>
-              ${r.descripcion ? `<p class="descripcion">${esc(r.descripcion)}</p>` : ""}
+              <span class="etiqueta">${esc(etiquetaCategoria(receta, lang))}${receta.ejemplo ? ` · ${t("example")}` : ""}</span>
+              <h1>${esc(v.nombre)}</h1>
+              ${v.descripcion ? `<p class="descripcion">${esc(v.descripcion)}</p>` : ""}
               <dl class="receta-datos">
-                <div><dt>Tiempo</dt><dd>${esc(String(r.tiempo || "—"))} min</dd></div>
-                <div><dt>Porciones</dt><dd>${esc(String(r.porciones || "—"))}</dd></div>
-                <div><dt>Dificultad</dt><dd>${esc(r.dificultad || "—")}</dd></div>
+                <div><dt>${t("dt_time")}</dt><dd>${esc(String(v.tiempo || "—"))} ${t("min")}</dd></div>
+                <div><dt>${t("dt_servings")}</dt><dd>${esc(String(v.porciones || "—"))}</dd></div>
+                <div><dt>${t("dt_diff")}</dt><dd>${esc(etiquetaDificultad(receta, lang))}</dd></div>
               </dl>
+              <div class="receta-acciones">
+                <a class="boton boton-secundario" href="${linkVideo(receta, lang)}" target="_blank" rel="noopener">${t("video_btn")}</a>
+              </div>
             </div>
           </section>
 
           <section class="receta-cuerpo">
             <div class="ingredientes">
-              <h2>Ingredientes</h2>
+              <h2>${t("ingredients")}</h2>
               <ul>
-                ${(r.ingredientes || []).map((ing, i) => `
+                ${(v.ingredientes || []).map((ing) => `
                   <li>
                     <label>
-                      <input type="checkbox" aria-label="Marcar ingrediente listo">
+                      <input type="checkbox">
                       <span>${esc(ing)}</span>
                     </label>
                   </li>`).join("")}
               </ul>
-              <p class="nota">Tildá los ingredientes a medida que los vas usando.</p>
+              <p class="nota">${t("tick_note")}</p>
             </div>
 
             <div>
-              <h2>Paso a paso</h2>
+              <h2>${t("steps")}</h2>
               <ol class="pasos">
-                ${(r.pasos || []).map((p) => `<li><p>${esc(p)}</p></li>`).join("")}
+                ${(v.pasos || []).map((p) => `<li><p>${esc(p)}</p></li>`).join("")}
               </ol>
             </div>
           </section>
         </article>`;
     }
 
-    if (!id) {
-      contenido.innerHTML = `<div class="no-encontrada">Esta receta no existe. <a href="index.html">Volver al recetario</a>.</div>`;
-    } else {
-      const receta = await traerReceta(id);
-      if (receta) pintar(receta);
-      else contenido.innerHTML = `<div class="no-encontrada">No encontramos esa receta. <a href="index.html">Volver al recetario</a>.</div>`;
-    }
+    aplicarIdioma();
+    conectarToggle(pintar);
+
+    if (id) receta = await traerReceta(id);
+    pintar();
   </script>
 </body>
 </html>

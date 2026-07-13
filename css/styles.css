@@ -1,7 +1,9 @@
 /* ============================================================
-   Recetario — hoja de estilos
-   Dirección: editorial de cocina casera. Papel cálido, tinta
-   marrón, acento pimentón. Fraunces (display) + Instrument Sans.
+   ספר המתכונים — hoja de estilos
+   Dirección: editorial de cocina casera, hebreo-first (RTL).
+   Papel cálido, tinta marrón, acento pimentón.
+   Frank Ruhl Libre (display) + Assistant (texto) — ambas con
+   soporte hebreo + latino, así el toggle he/en no cambia la voz.
    ============================================================ */
 
 :root {
@@ -18,8 +20,8 @@
   --borde: oklch(85% 0.022 80);
   --blanco-calido: oklch(98.5% 0.007 90);
 
-  --serif: "Fraunces", Georgia, serif;
-  --sans: "Instrument Sans", system-ui, sans-serif;
+  --serif: "Frank Ruhl Libre", Georgia, serif;
+  --sans: "Assistant", system-ui, sans-serif;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --sombra-carta: 0 1px 2px oklch(30% 0.03 60 / 0.06), 0 8px 24px -12px oklch(30% 0.05 55 / 0.22);
@@ -77,7 +79,6 @@ a { color: inherit; }
   font-family: var(--serif);
   font-weight: 700;
   font-size: 1.35rem;
-  letter-spacing: -0.01em;
   text-decoration: none;
   display: flex;
   align-items: baseline;
@@ -156,8 +157,7 @@ a { color: inherit; }
   font-family: var(--serif);
   font-size: clamp(2.6rem, 6vw, 4.4rem);
   font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
   margin: 0 0 1.2rem;
 }
 
@@ -195,7 +195,9 @@ a { color: inherit; }
 .hero-figura::before {
   content: "";
   position: absolute;
-  inset: -14px 14px 14px -14px;
+  inset-block: -14px 14px;
+  inset-inline-start: -14px;
+  inset-inline-end: 14px;
   border: 1.5px solid var(--pimenton);
   border-radius: 6px;
   transform: rotate(-1deg);
@@ -205,7 +207,7 @@ a { color: inherit; }
 .hero-nota {
   position: absolute;
   bottom: -1.1rem;
-  left: -1.4rem;
+  inset-inline-start: -1.4rem;
   background: var(--blanco-calido);
   border: 1px solid var(--borde);
   border-radius: 4px;
@@ -238,7 +240,6 @@ a { color: inherit; }
   font-family: var(--serif);
   font-size: clamp(1.7rem, 3.5vw, 2.4rem);
   font-weight: 600;
-  letter-spacing: -0.015em;
   margin: 0;
   white-space: nowrap;
 }
@@ -347,7 +348,7 @@ a { color: inherit; }
 .etiqueta {
   position: absolute;
   top: 0.8rem;
-  left: 0.8rem;
+  inset-inline-start: 0.8rem;
   background: var(--blanco-calido);
   color: var(--tinta);
   font-size: 0.72rem;
@@ -360,8 +361,8 @@ a { color: inherit; }
 }
 
 .etiqueta-ejemplo {
-  left: auto;
-  right: 0.8rem;
+  inset-inline-start: auto;
+  inset-inline-end: 0.8rem;
   background: var(--pimenton-claro);
   color: var(--pimenton-oscuro);
 }
@@ -372,9 +373,8 @@ a { color: inherit; }
   font-family: var(--serif);
   font-size: 1.22rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
   margin: 0 0 0.45rem;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .carta-meta {
@@ -424,11 +424,11 @@ a { color: inherit; }
   gap: 1.1rem;
   padding: 1.15rem 0.3rem;
   text-decoration: none;
-  transition: background 150ms ease, padding-left 200ms var(--ease-out);
+  transition: background 150ms ease, padding-inline-start 200ms var(--ease-out);
   border-radius: 4px;
 }
 
-.inspiracion-lista a:hover { background: oklch(98.5% 0.007 90 / 0.7); padding-left: 0.8rem; }
+.inspiracion-lista a:hover { background: oklch(98.5% 0.007 90 / 0.7); padding-inline-start: 0.8rem; }
 
 .inspiracion-num {
   font-family: var(--serif);
@@ -458,7 +458,9 @@ a { color: inherit; }
   transition: transform 200ms var(--ease-out), color 150ms ease;
 }
 
-.inspiracion-lista a:hover .inspiracion-flecha { transform: translateX(3px); color: var(--pimenton); }
+/* la flecha avanza en el sentido de lectura: RTL ↔ LTR */
+[dir="rtl"] .inspiracion-lista a:hover .inspiracion-flecha { transform: translateX(-3px); color: var(--pimenton); }
+[dir="ltr"] .inspiracion-lista a:hover .inspiracion-flecha { transform: translateX(3px); color: var(--pimenton); }
 
 /* ---------- Pie ---------- */
 
@@ -487,8 +489,7 @@ a { color: inherit; }
   font-family: var(--serif);
   font-size: clamp(2.1rem, 5vw, 3.2rem);
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
+  line-height: 1.12;
   margin: 0 0 0.8rem;
 }
 
@@ -638,10 +639,11 @@ a { color: inherit; }
   font-family: var(--serif);
   font-size: clamp(2.2rem, 5vw, 3.4rem);
   font-weight: 600;
-  line-height: 1.06;
-  letter-spacing: -0.02em;
+  line-height: 1.12;
   margin: 0 0 1rem;
 }
+
+.receta-acciones { margin-top: 1.4rem; }
 
 .receta-hero .descripcion { color: var(--tinta-suave); font-size: 1.05rem; margin: 0 0 1.5rem; max-width: 48ch; }
 
