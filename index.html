@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400..900&family=Assistant:wght@400..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="home">
 
   <header class="cabecera">
     <div class="contenedor cabecera-inner">
@@ -217,6 +217,19 @@
       pintar();
       pintarInspiracion();
     }
+
+    // navbar transparente sobre el hero; se vuelve sólido al pasar el hero
+    (() => {
+      const header = document.querySelector(".cabecera");
+      const hero = document.querySelector(".hero-bg");
+      if (!header || !hero) return;
+      const onScroll = () => {
+        header.classList.toggle("scrolled", hero.getBoundingClientRect().bottom < 90);
+      };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+    })();
 
     aplicarIdioma();
     conectarToggle(pintarTodo);
