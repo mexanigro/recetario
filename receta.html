@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>מתכון — ספר המתכונים</title>
+  <title>מתכון — פינת המתכונים</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍳</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,10 +14,10 @@
 
   <header class="cabecera">
     <div class="contenedor cabecera-inner">
-      <a class="marca" href="index.html"><span data-i18n="brand">ספר המתכונים</span><span class="punto">.</span></a>
+      <a class="marca" href="index.html"><span data-i18n="brand">פינת המתכונים</span><span class="punto">.</span></a>
       <nav class="nav-links" aria-label="ניווט ראשי">
         <button class="chip" id="lang-toggle" type="button">English</button>
-        <a href="index.html" data-i18n="back_home">→ חזרה לספר המתכונים</a>
+        <a href="index.html" data-i18n="back_home">→ חזרה למתכונים</a>
         <a class="boton solo-desktop" href="agregar.html" data-i18n="nav_add">+ הוספת מתכון</a>
       </nav>
     </div>
@@ -28,7 +28,7 @@
   </main>
 
   <footer class="contenedor pie">
-    <span data-i18n="footer_tag">ספר המתכונים — נעשה בבית, עם רעב.</span>
+    <span data-i18n="footer_tag">פינת המתכונים — לומדים לבשל, צעד אחרי צעד.</span>
     <a href="agregar.html" data-i18n="footer_add">הוסיפו מתכון</a>
   </footer>
 
@@ -64,6 +64,7 @@
               </dl>
               <div class="receta-acciones">
                 <a class="boton boton-secundario" href="${linkVideo(receta, lang)}" target="_blank" rel="noopener">${t("video_btn")}</a>
+                ${receta.fuente ? `<p class="receta-fuente">${t("source_label")} <a href="${esc(receta.fuente.url)}" target="_blank" rel="noopener">${esc(receta.fuente.nombre)}</a></p>` : ""}
               </div>
             </div>
           </section>

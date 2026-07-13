@@ -645,6 +645,14 @@ a { color: inherit; }
 
 .receta-acciones { margin-top: 1.4rem; }
 
+.receta-fuente {
+  font-size: 0.83rem;
+  color: var(--tinta-tenue);
+  margin: 0.7rem 0 0;
+}
+
+.receta-fuente a { color: var(--tinta-suave); }
+
 .receta-hero .descripcion { color: var(--tinta-suave); font-size: 1.05rem; margin: 0 0 1.5rem; max-width: 48ch; }
 
 .receta-datos {
